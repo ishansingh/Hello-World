@@ -1,0 +1,15 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @old_twit.name %>
+</p>
+
+<p>
+  <b>Tdata:</b>
+  <%= @old_twit.tdata %>
+</p>
+
+
+<%= link_to 'Edit', edit_old_twit_path(@old_twit) %> |
+<%= link_to 'Back', old_twits_path %>

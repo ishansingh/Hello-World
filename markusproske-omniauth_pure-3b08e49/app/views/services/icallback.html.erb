@@ -1,0 +1,52 @@
+in incallback
+<br />
+ENV <%= request.env['omniauth.auth'] %>
+<br />
+CURRENT USER<%= current_user.name %>
+<br />
+ICODE <%= @i_code %>
+<br />
+REQ <%= @req %>
+
+<br />
+<% @uname %>
+<br />
+<% @instid %>
+<br />
+
+
+<br />
+<br />
+<br />
+
+<%= @response %>
+<br />
+<br />
+<br />
+<%= @y %>
+<br />
+<br />
+
+<% @sup %>
+
+<% @rsup.each do |post|  %>
+	post is :
+	<% full = post.to_json%>
+	<br />
+	LINK IS : <%= JSON.parse(full)["link"] %>
+	<br />	<% if JSON.parse(full)["caption"] != nil %>
+	TEXT IS : <%= JSON.parse(full)["caption"]["text"] %>
+		<% end %>
+	<br />
+	IMAGE IS : <%= JSON.parse(JSON.parse(full)["images"]["standard_resolution"].to_json)["url"] %>
+	<br />
+		<% if JSON.parse(full)["caption"] != nil %>
+	USERNAME IS : <%= JSON.parse(JSON.parse(full)["caption"]["from"].to_json)["username"] %>
+		<% end %>
+	<br />
+		<% if JSON.parse(full)["caption"] != nil %>
+	PFPIC IS : <%= JSON.parse(JSON.parse(full)["caption"]["from"].to_json)["profile_picture"] %>
+		<% end %>
+	<br />	
+	<br />
+<% end %>

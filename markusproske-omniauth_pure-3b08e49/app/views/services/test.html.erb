@@ -1,0 +1,1213 @@
+<% count = 0 %>
+
+<% ex = URI.parse("http://twitter.com/statuses/home_timeline.json") %>
+   <%             http = Net::HTTP.new(ex.host, ex.port) %>
+       <%         res = http.get("http://twitter.com/statuses/home_timeline.json", nil) %>
+         <%=       @dxx = res.body %>ddd
+
+
+<br />
+<br />
+
+<head>
+	<%= form_for :post, :url => { :action => "post", :controller => "services" } do |f| %>
+    		<%= f.text_field :text %>
+		<%= f.check_box :fb %>
+		<%= f.label :Facebook%>
+		<%= f.check_box :twit %>
+        	<%= f.label :Twitter %>
+		<%= f.check_box :inst %>
+        	<%= f.label :Instagram %>
+    		<%= f.submit %>
+	<% end %>
+	<style type="text/css">
+	.overview
+	{
+	  position:fixed;
+	  display:none;
+	}
+	</style>
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" charset="utf-8">
+    	</script>
+</head>
+
+
+<body>
+<% @services.each do |service| %>  
+	<% if ['facebook'].index(service.provider)  %>
+		<%= image_tag "facebook-logo_270x102.png", :size  =>"135x51" %>
+
+		<br />
+		<% fb_pic_url = "http://res.cloudinary.com/demo/image/facebook/w_175,h_175,c_fill,r_7,g_face/" + service.uid + ".jpg" %>
+		<% fb_url = "http://www.facebook.com/" + service.uid %>
+	<% if @newsfeed != nil %>
+		 <%count = 0%>
+		 <% @newsfeed.each do |friendpost|%>
+			<%begin%>
+				<% fin_url = friendpost["link"]%>
+				<% img_url = friendpost["picture"]%>
+                        	<% avar = friendpost["id"].index('_')%>
+				<% fbidi = friendpost["id"]%>
+				<% facebook = fbidi[0, avar] %>
+				<% fbtoint = facebook.to_i%>
+				<% middle = 'http://graph.facebook.com/' + facebook%>
+				<% if fbtoint != 0 %>
+				<% allname =  @api.get_object(fbtoint) %>
+				<% end %>
+				<% if allname != nil && allname["name"] != nil %>
+					<% allnames = allname["name"]%>
+				<% end %>
+				<% names = friendpost["name"] %> 
+				<% friend_pic_url =  "http://res.cloudinary.com/demo/image/facebook/w_175,h_175,c_fill,r_7,g_faces/" + facebook + ".jpg"  %>
+				<% friend_url = "http://graph.facebook.com/" + facebook %>
+				<% fb_url = "http://www.facebook.com/" + facebook %>
+				<%if fin_url != nil %>
+					<% if friend_pic_url.include?(service.uid) %>
+						<% if @notifications != nil%>
+                        				<% @notifications.each do |notification| %>
+							<% count = count + 1 %>
+                                				<% begin %>
+                                					<% final_url = notification["link"] %>
+                                					<% pic_url = notification["picture"] %>
+                                					<% if final_url != nil %>
+										<div id=<%= count.to_s() %> class="overview">
+                                							<div class="overview-backdrop"></div>
+                                							<div class="overview-panel current start" style="top: 50px; right: 20px; bottom: 0px; left: 20px;">
+                                        							<div class="overview-wrap">
+                                                							<div class="overview-inner">
+                                                        							<div class="overview-header">
+                                                                							<div onclick="new function() {
+                                                                                                                                var notif = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(notif.className = 'overview.open'){
+                                                                                                                                        notif.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        notif.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }"class="overview-controls-right">
+                                                                        							<a onclick="new function() {
+                                                                                                                                var notif = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(notif.className = 'overview.open'){
+                                                                                                                                        notif.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        notif.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }"id = "close" class="kd-button small close" title="Close">
+                                                                                							<img onclick="new function() {
+                                                                                                                                var notif = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(notif.className = 'overview.open'){
+                                                                                                                                        notif.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        notif.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }" width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAEZ0FNQQAAsY58+1GTAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAK9JREFUeNpjYBgFQxpoAPFqIObBIicBxOuhNFbAjEN8NxA7AbEd1PBfSAbuB2IbIFYB4pWkGHoQiEOAWAvJYCGogSBf3ADiUCD+gk0zI4Eg2A913REgFkEy0BGIX5DqfRB4A8RbkVwsQoyBIMBEIMI+QDGyRV8IxTI+l0qgheEftDD+Raqh6AY6QmM6hBiDcRkKMlAPLQzRw1gNajDRAJQOT+NI4CDXn4fSo2AUoAEAj24p6G8syswAAAAASUVORK5CYII=">
+                                                                        							</a>
+                                                                							</div>
+                                                        							</div>
+                                                        							<div class="overview-content" tabindex="0">
+                                                                							<div class="article hentry " itemtype="http://schema.org/BlogPosting" itemscope="">
+                                                                        							<div class="article-header">
+                                                                                							<a class="ribbon date " itemprop="url">
+                                                                                        							<div class="top ribbon-piece"><%=Time.new.strftime("%b")%></div>
+                                                                                        							<div class="bottom ribbon-piece"><%=Time.new.day%></div>
+                                                                                        							<div class="tail">
+                                                                                                							<div class="left ribbon-piece"></div>
+                                                                                                							<div class="right ribbon-piece"></div>
+                                                                                        							</div>
+                                                                                							</a>
+                                                                                							<h1 class="title entry-title" itemprop="name">
+                                                                                        							<a itemprop="url" rel="bookmark"><%=link_to fin_url, :target=> "_blank" do %><%="Notification"%><%end%></a>
+                                                                                							</h1>
+                                                                       								</div>
+                                                                        							<div class="article-content entry-content" itemprop="articleBody">
+                                                                                							
+																	<div class ="name"><%= notification["title"]%></div>
+																	<%= image_tag img_url%>
+																	<br/>	
+																	<div class = "capt"><%= friendpost["message"]%></div>
+                                                                        							</div>
+                                                                							</div>
+                                                        							</div>
+                                                							</div>
+                                        							</div>
+                                							</div>
+                        							</div>
+										<div itemtype="http://www.life-tyme.com/" itemscope="" class="item revstart" data-id="" style="left: 185px; top: 0px; width: 185px; height: 185px;">
+                                                					<div class="card ">
+                                                        					<div  class="front">
+                                                                					<%= image_tag fb_pic_url, :size => "175x175" %>
+													<br/>
+													<%=allnames%>
+                                                                					<div class="overlay">
+                                                                					</div>
+                                                        					</div>
+                                                        					<div  onclick = "new function() {
+													var notif = document.getElementById(<%=count.to_s()%>);
+													if (notif.className = 'overview'){
+														notif.className = 'overview.open';
+                                                                        				}else{
+                                                                                				notif.className ='overview';
+                                                                        				}			
+												}" class="back">
+                                                                					<div class="overlay">
+                                                                        					<div itemprop="name" class="title entry-title">
+                                                                                					<%=  notification["title"] %>
+                                                                                					<br />
+															<% if img_url != nil %>
+                                                                                                                                <%= image_tag img_url, :size =>"75x75",:scale => :fit, :width => "", :height => "" %>
+                                                                                                                        <% end %>
+															<%= friendpost["message"]%>
+														</div>
+                                                                					</div>
+                                                        					</div>
+                                                					</div>
+                                        					</div>			
+									<% end %>
+								<% rescue %>
+								<% end %>
+							<% end %>
+						<% end %>
+					<%elsif friend_pic_url.include?('g_faces/0')%>
+					<%elsif friendpost["story"] != nil && img_url != nil && friend_pic_url.include?('g_faces/0') == false && friend_pic_url != nil && facebook != nil && facebook != 0%>
+						<% count = count + 1 %> 
+						<div itemtype="http://www.life-tyme.com/" itemscope="" class="item revstart" data-id="" style="left: 185px; top: 0px; width: 185px; height: 185px;">
+		                        		<div class="card ">
+                                                		<div  class="front">
+									<%if friend_pic_url != nil && friend_pic_url != 0%>
+                                                        		<%= image_tag friend_pic_url, :size =>"175x175" %>
+									<br/>
+									<%= allnames%>
+									<%end%>
+                                                        		<div class="overlay">
+                                                        		</div>
+                                                		</div>
+                                                		<div onclick="new function() {
+									var story = document.getElementById(<%=count.to_s()%>);
+						                        if (story.className = 'overview'){
+                                						story.className = 'overview.open';
+                        						}else{
+                                						story.className ='overview';
+                        						}	
+								}"  class="back">
+										<div class="overlay">
+                                                                		<div itemprop="name" class="title entry-title">
+                                                                        		<% if friendpost["story"].length > 50 %>
+												<% story = friendpost["story"] %>
+												<%= story[0,50] + '...' %>
+											<% else %>
+												<%= friendpost["story"] %>
+											<% end %>
+											<br/>
+                                                                			<%=image_tag img_url, :size =>"75x75",:scale => :fit, :width => "", :height => ""%>
+										</div>
+                                                        		</div>
+								</div>
+                                        		</div>
+							<div id=<%=count.to_s()%> class="overview" >
+                                                                                        <div class="overview-backdrop"></div>
+                                                                                        <div class="overview-panel current start" style="top: 50px; right: 20px; bottom: 0px; left: 20px;">
+                                                                                                <div class="overview-wrap">
+                                                                                                        <div class="overview-inner">
+                                                                                                                <div class="overview-header">
+															<div class="overview-controls-left">
+																<a onclick ="new function() {
+																	var current = document.getElementById(<%=count.to_s()%>);
+																	var newer = document.getElementById(<%= (count-1).to_s()%>)
+																	var newerop = document.getElementById(<%= (count-2).to_s()%>)
+																	if(current.className = 'overview.open'){
+																		current.className = 'overview';
+																		if(newer.className==null){
+																			newerop.className = 'overview.open';
+																		}
+																		else{
+																			newer.className = 'overview.open';
+																		}
+																	}
+																}" class="kd-button small left previous "  title="Newer">
+																	<img onclick="new function() {
+																		var current = document.getElementById(<%=count.to_s()%>);
+																		var newer = document.getElementById(<%= (count - 1).to_s()%>)
+																		var newerop = document.getElementById(<%= (count - 2).to_s()%>)
+																		if(current.className = 'overview.open'){
+																			current.className = 'overview';
+																			if(newer.className == null){
+																				newerop.className = 'overview.open';
+																			else {
+																				newer.className='overview.open';
+																			}
+																		}	
+																	}"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4y2P4//8/A7Uxw6ihuCWxAFZ2DgMgfgCiqWIo1MAPQPwfZDDFhqIZ+IFil2IzECROtqG4DCTbUHwGUmLoA6iBIJyAHnGDx6U0CVOaxT7N0inNchTV8v5oIU0WBgCihhmGBdyx8gAAAABJRU5ErkJggg==">
+																</a>
+																<a onclick="new function(){
+																	var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                        var older = document.getElementById(<%= (count+1).to_s()%>)
+                                                                                                                                        var olderop = document.getElementById(<%= (count + 2).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+																		if(older.className == null){
+                                                                                                                                                	olderop.className = 'overview.open';
+																		}
+																		else{
+																			older.className='overview.open';
+																		}
+                                                                                                                                        }
+																}"class="kd-button small right next "  title="Older">
+																	<img onclick="new function() {
+																		var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                        	var older = document.getElementById(<%= (count+1).to_s()%>)
+                                                                                                                                        	var olderop = document.getElementById(<%= (count + 2).to_s()%>)
+                                                                                                                                        	if(current.className = 'overview.open'){
+																			current.className = 'overview';
+																			if(older.className == null){
+                                                                                                                                                        	olderop.className = 'overview.open';
+																			}
+																			else{
+																				older.className = 'overview.open';
+																			}	
+                                                                                                                                        	}
+																}"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4jWP4//8/A7Ux1Q0cRoaysnMYAPEDEM2ABZBrKMjA/0D8AZvBlLj0Ay6DyTIUBPAZTLah+AymyFBcBlNsKNTgBKihIPxg8LmU6mFK9dinSTqlZY6ibt4nF49wQwEZ7RmGkO+jqQAAAABJRU5ErkJggg==">
+																</a>
+															</div>
+                                                                                                                        <div onclick="new function() {
+																var story = document.getElementById(<%=count.to_s()%>);
+			                        										if(story.className = 'overview.open'){
+										                        			        story.className = 'overview';
+										                        			}
+                        													else{
+										                        			        story.className = 'overview.open';
+                        													}
+															}"class="overview-controls-right">
+                                                                                                                                <a onclick="new function() {
+                                                                                                                                var story = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(story.className = 'overview.open'){
+                                                                                                                                        story.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+		                                                                                                                        story.className = 'overview.open'; 
+																}
+                                                                                                                        }"id = "close" class="kd-button small close" title="Close">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                var story = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(story.className = 'overview.open'){
+                                                                                                                                        story.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        story.className = 'overview.open'; 
+																}
+                                                                                                                        }" width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAEZ0FNQQAAsY58+1GTAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAK9JREFUeNpjYBgFQxpoAPFqIObBIicBxOuhNFbAjEN8NxA7AbEd1PBfSAbuB2IbIFYB4pWkGHoQiEOAWAvJYCGogSBf3ADiUCD+gk0zI4Eg2A913REgFkEy0BGIX5DqfRB4A8RbkVwsQoyBIMBEIMI+QDGyRV8IxTI+l0qgheEftDD+Raqh6AY6QmM6hBiDcRkKMlAPLQzRw1gNajDRAJQOT+NI4CDXn4fSo2AUoAEAj24p6G8syswAAAAASUVORK5CYII=">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                </div>
+                                                                                                                <div class="overview-content" tabindex="0">
+                                                                                                                        <div class="article hentry " itemtype="http://schema.org/BlogPosting" itemscope="">
+                                                                                                                                <div class="article-header">
+                                                                                                                                        <a class="ribbon date " itemprop="url">
+                                                                                                                                                <div class="top ribbon-piece"><%=Time.new.strftime("%b") %></div>
+                                                                                                                                                <div class="bottom ribbon-piece"><%=Time.new.day%></div>
+                                                                                                                                                <div class="tail">
+                                                                                                                                                        <div class="left ribbon-piece"></div>
+                                                                                                                                                        <div class="right ribbon-piece"></div>
+                                                                                                                                                </div>
+                                                                                                                                        </a>
+                                                                                                                                        <h1 class="title entry-title" itemprop="name">
+                                                                                                                                                <a itemprop="url" rel="bookmark"><%=link_to fin_url, :target=> "_blank" do %><%="News Feed (Story Update)"%><%end%></a>
+                                                                                                                                        </h1>
+                                                                                                                                </div>
+                                                                                                                                <div class="article-content entry-content" itemprop="articleBody">
+																	<%=allnames%>
+																	<br/>
+																	<% if img_url != friend_pic_url %>
+																		<%= image_tag friend_pic_url %>
+																	<% else %>
+																	<% end %>
+                                                                                                                                        <%= image_tag img_url%>
+                                                                                                                                        <br/>
+																		<%= friendpost["story"]%>
+																	<% if friendpost["caption"] != nil %>
+																			<br/>
+																			<% friendpost["caption"]%>
+																	<% end %>	
+                                                                                                                                </div>
+                                                                                                                        </div>
+                                                                                                                </div>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        </div>
+                                                                                </div>
+                                		</div>
+                                	<%elsif friendpost["message"] != nil && friendpost["story"] == nil && img_url != nil && friend_pic_url != 0 && friend_pic_url != nil %>
+						<% count = count + 1 %>
+						<div itemtype="http://www.life-tyme.com/" itemscope="" class="item revstart" data-id="" style="left: 185px; top: 0px; width: 185px; height: 185px;">
+							<div class="card ">
+                                                                <div  class="front">
+									<%if friend_pic_url != nil && friend_pic_url != 0%>
+									<%= image_tag friend_pic_url, :size =>"175x175" %>
+									<br/>
+									<%=allnames%>
+									<%end%>
+                                                                        <div class="overlay">
+                                                                        </div>
+                                                                </div>
+                                                               	<div  onclick="new function() {
+                                                                        var msg = document.getElementById(<%=count.to_s()%>);
+                                                                        if (msg.className = 'overview'){
+                                                                                msg.className = 'overview.open';
+                                                                        }else{
+                                                                                msg.className ='overview';
+                                                                        }
+                                                                }" class="back">
+									<div class="overlay">
+                                                                                <div itemprop="name" class="title entry-title">
+											 <%if friendpost["message"].include?('http')%>
+												<% if friendpost["message"].index('http') == 0%>
+													<% longlink = friendpost["message"]%>
+													<% sitelen = longlink.length%>
+													<% if longlink.include?('.com/')%>
+														<% comind = longlink.index('.com/')%>
+														<% midword = longlink[7,comind]%>
+													<% else %>
+														<% midword = longlink[7,20] + '..'%>
+													<% end %>
+													<% finalword = allnames + ' posted a link to ' + midword + '.' %>
+												<%else%>
+													<% indhttp = friendpost["message"].index('http') %>
+													<% longlink = friendpost["message"] %>
+														<% finalword = allnames + " " + longlink[0,20] + '...' %>
+												<%end%>
+											 <%elsif allnames != nil && friendpost["message"].length < 50%>
+											 	<%finalword = allnames + " " + friendpost["message"]%>
+											 <%elsif friendpost["message"].length > 50%>
+												<% longmes = allnames + " " + friendpost["message"]%>
+												<%finalword = longmes[0,50] + '...'%>
+											 <%elsif allnames == nil%>
+												<%finalword = friendpost["message"]%>
+											 <%end%>
+	<% if finalword == nil %>
+	<% elsif finalword.length < 50%>
+												<% if finalword.include?('http')%>
+													<% if finalword.index('http') == 0%>
+														<% if allnames != nil && names.include?('http') == false %>
+															<%= allnames + ' posted a link to ' + finalword[7,16] + '.' %>
+														<% else %>
+															<%= 'A link was posted to ' + finalword[7,16] + '.' %>
+														<% end %>
+													<%else%>
+														<% cropword = finalword.index('http')%>
+														<%= finalword[0,cropword] %>
+													<% end %>
+												<%else%>	
+												<%= finalword %>
+												<% end %>
+											 <% else %>
+												<% if finalword.index('http') != 0 %>
+											 		<%= finalword[0,45] + '...' %>
+												<% else %>
+													<%= finalword[0,20] + '...'%>
+												<% end %>
+											 <% end %>
+											<br/>
+                                                                        		 <%=image_tag img_url, :size =>"75x75",:scale => :fit, :width => "", :height => ""%>
+									        </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+									<div id=<%=count.to_s()%> class="overview">
+                                                                                <div class="overview-backdrop"></div>
+                                                                                        <div class="overview-panel current start" style="top: 50px; right: 20px; bottom: 0px; left: 20px;">
+                                                                                                <div class="overview-wrap">
+                                                                                                        <div class="overview-inner">
+                                                                                                                <div class="overview-header">
+															<div class="overview-controls-left">
+                                                                                                                                <a onclick ="new function() {
+                                                                                                                                        var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                        var newer = document.getElementById(<%= (count-1).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+                                                                                                                                                newer.className = 'overview.open'
+                                                                                                                                        }
+                                                                                                                                }" class="kd-button small left previous "  title="Newer">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                                var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                                var newer = document.getElementById(<%= (count - 1).to_s()%>)
+                                                                                                                                                if(current.className = 'overview.open'){
+                                                                                                                                                        current.className = 'overview';
+                                                                                                                                                        if(newer.className != 'overview'){
+                                                                                                                                                                newerop.className = 'overview.open';
+                                                                                                                                                        else {
+                                                                                                                                                                newer.className='overview.open'
+                                                                                                                                                        }
+                                                                                                                                                }
+                                                                                                                                        }"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4y2P4//8/A7Uxw6ihuCWxAFZ2DgMgfgCiqWIo1MAPQPwfZDDFhqIZ+IFil2IzECROtqG4DCTbUHwGUmLoA6iBIJyAHnGDx6U0CVOaxT7N0inNchTV8v5oIU0WBgCihhmGBdyx8gAAAABJRU5ErkJggg==">
+                                                                                                                                </a>
+                                                                                                                                <a onclick="new function(){
+                                                                                                                                        var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                        var older = document.getElementById(<%= (count+1).to_s()%>)
+                                                                                                                                        var olderop = document.getElementById(<%= (count + 2).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+                                                                                                                                                older.className = 'overview.open'
+                                                                                                                                        }
+                                                                                                                                }"class="kd-button small right next "  title="Older">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                                var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                                var older = document.getElementById(<%= (count+1).to_s()%>)
+                                                                                                                                                var olderop = document.getElementById(<%= (count + 2).to_s()%>)
+                                                                                                                                                if(current.className = 'overview.open'){
+                                                                                                                                                        current.className = 'overview';
+                                                                                                                                                        older.className = 'overview.open'
+                                                                                                                                                }
+                                                                                                                                }"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4jWP4//8/A7Ux1Q0cRoaysnMYAPEDEM2ABZBrKMjA/0D8AZvBlLj0Ay6DyTIUBPAZTLah+AymyFBcBlNsKNTgBKihIPxg8LmU6mFK9dinSTqlZY6ibt4nF49wQwEZ7RmGkO+jqQAAAABJRU5ErkJggg==">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                        <div onclick="new function() {
+                                                                                                                                var msg = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(msg.className = 'overview.open'){
+                                                                                                                                        msg.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        msg.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }"class="overview-controls-right">
+                                                                                                                                <a onclick="new function() {
+                                                                                                                                var msg = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(msg.className = 'overview.open'){
+                                                                                                                                        msg.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        msg.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }"id = "close" class="kd-button small close" title="Close">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                var msg = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(msg.className = 'overview.open'){
+                                                                                                                                        msg.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        msg.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }" width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAEZ0FNQQAAsY58+1GTAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAK9JREFUeNpjYBgFQxpoAPFqIObBIicBxOuhNFbAjEN8NxA7AbEd1PBfSAbuB2IbIFYB4pWkGHoQiEOAWAvJYCGogSBf3ADiUCD+gk0zI4Eg2A913REgFkEy0BGIX5DqfRB4A8RbkVwsQoyBIMBEIMI+QDGyRV8IxTI+l0qgheEftDD+Raqh6AY6QmM6hBiDcRkKMlAPLQzRw1gNajDRAJQOT+NI4CDXn4fSo2AUoAEAj24p6G8syswAAAAASUVORK5CYII=">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                </div>							
+														<div class="overview-content" tabindex="0">
+                                                                                                                        <div class="article hentry " itemtype="http://schema.org/BlogPosting" itemscope="">
+                                                                                                                                <div class="article-header">
+                                                                                                                                        <a class="ribbon date " itemprop="url">
+                                                                                                                                                <div class="top ribbon-piece"><%=Time.new.strftime("%b")%></div>
+                                                                                                                                                <div class="bottom ribbon-piece"><%=Time.new.day%></div>
+                                                                                                                                                <div class="tail">
+                                                                                                                                                        <div class="left ribbon-piece"></div>
+                                                                                                                                                        <div class="right ribbon-piece"></div>
+                                                                                                                                                </div>
+                                                                                                                                        </a>
+                                                                                                                                        <h1 class="title entry-title" itemprop="name">
+                                                                                                                                                <a itemprop="url" rel="bookmark"><%=link_to fin_url, :target=> "_blank" do %><%="News Feed (Message Update)"%><%end%></a>
+                                                                                                                                        </h1>
+                                                                                                                                </div>
+                                                                                                                                <div class="article-content entry-content" itemprop="articleBody">
+                                                                                                                                        <%= allnames%>
+																	<br/>
+																	<%= image_tag friend_pic_url%>
+																	<%= image_tag img_url%>
+                                                                                                                                        <br/>
+                                                                                                                                        <% if friendpost["message"].include?('http')%>
+																		<% if friendpost["message"].index('http') == 0%>
+                                                                                                        						<% longlink = friendpost["message"]%>
+                                                                                                        						<% sitelen = longlink.length%>
+								  											<% if longlink.include?('.com/') %>											
+																				<% comind = longlink.index('.com/') - 3 %>
+                                                                                                        						<% midword = longlink[7,comind]%>
+																			<% else %>
+																			<% midword = longlink[7,sitelen]%>
+
+																			<% end %>
+                                                                                                        						<% if allnames != nil %>
+                                                                                                                						<%= finalword = allnames + ' posted a link to ' + midword + '.' %>
+                                                                                                        						<% else %>
+                                                                                                                						<%= finalword = 'A link was posted to ' + midword + '.' %>
+                                                                                                        						<% end %>
+                                                                                                						<%else%>
+                                                                                                        						<% indhttp = friendpost["message"].index('http') %>
+                                                                                                        						<% longlink = friendpost["message"] %>
+                                                                                                        						<% if allnames != nil %>
+                                                                                                                						<%= finalword = allnames + " " + longlink %>
+                                                                                                        						<% else %>
+                                                                                                                						<%= finalword = longlink %>
+                                                                                                        						<% end %>
+                                                                                                						<%end%>
+																	<% else %>
+																		<% if allnames != nil %>
+																			<%= allnames + " " +friendpost["message"]%>
+																		<% end %>
+                                                                                                                                	<% end %>
+																</div>
+                                                                                                                        </div>
+                                                                                                                </div>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        </div>
+                                                                                </div>
+                                                </div>
+					<%elsif friendpost["caption"] != nil && friendpost["story"] == nil && img_url != nil && friend_pic_url != 0 && friend_pic_url != nil%>
+						<% count = count + 1 %>
+						<div itemtype="http://www.life-tyme.com/" itemscope="" class="item revstart" data-id="" style="left: 185px; top: 0px; width: 185px; height: 185px;">
+                                                        <div class="card ">
+                                                                <div  class="front">
+									<%if friend_pic_url != nil && friend_pic_url != 0 %>
+                                                                        <%= image_tag friend_pic_url, :size =>"175x175" %>
+									<%end%>
+									<%=allnames%>
+                                                                        <div class="overlay">
+                                                                        </div>
+                                                                </div>
+                                                                <div onclick="new function() {
+                                                                        var other = document.getElementById(<%=count.to_s()%>);
+                                                                        if (other.className = 'overview'){
+                                                                                other.className = 'overview.open';
+                                                                        }else{
+                                                                                other.className ='overview';
+                                                                        }
+                                                                }"class="back">
+                                                                        <div class="overlay">
+                                                                                <div itemprop="name" class="title entry-title">
+                                                                                         <%if names != nil%>
+                                                                                                <%finalw = names + " " + friendpost["caption"] %>
+                                                                                         <%elsif names ==nil%>
+                                                                                                <%finalw = friendpost["caption"]%>
+                                                                                         <%end%>
+											<%= finalw[0,50] + '...'%>
+                                                                			<%=image_tag img_url, :size =>"75x75",:scale => :fit, :width => "", :height => ""%>
+								                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+							 <div id=<%=count.to_s()%> class="overview">
+                                                                                <div class="overview-backdrop"></div>
+                                                                                        <div class="overview-panel current start" style="top: 50px; right: 20px; bottom: 0px; left: 20px;">
+                                                                                                <div class="overview-wrap">
+                                                                                                        <div class="overview-inner">
+                                                                                                                <div class="overview-header">
+                                                                                                                        <div class="overview-controls-left">
+                                                                                                                                <a onclick ="new function() {
+                                                                                                                                        var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                        var newer = document.getElementById(<%= (count-1).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+                                                                                                                                                newer.className = 'overview.open'
+                                                                                                                                        }
+                                                                                                                                }" class="kd-button small left previous "  title="Newer">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                                var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                                var newer = document.getElementById(<%= (count - 1).to_s()%>)
+                                                                                                                                                if(current.className = 'overview.open'){
+                                                                                                                                                        current.className = 'overview';
+                                                                                                                                                        if(newer.className != 'overview'){
+                                                                                                                                                                newerop.className = 'overview.open';
+                                                                                                                                                        else {
+                                                                                                                                                                newer.className='overview.open'
+                                                                                                                                                        }
+                                                                                                                                                }
+                                                                                                                                        }"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4y2P4//8/A7Uxw6ihuCWxAFZ2DgMgfgCiqWIo1MAPQPwfZDDFhqIZ+IFil2IzECROtqG4DCTbUHwGUmLoA6iBIJyAHnGDx6U0CVOaxT7N0inNchTV8v5oIU0WBgCihhmGBdyx8gAAAABJRU5ErkJggg==">
+                                                                                                                                </a>
+                                                                                                                                <a onclick="new function(){
+                                                                                                                                        var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                        var older = document.getElementById(<%= (count+1).to_s()%>)
+                                                                                                                                        var olderop = document.getElementById(<%= (count + 2).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+                                                                                                                                                older.className = 'overview.open'
+                                                                                                                                        }
+                                                                                                                                }"class="kd-button small right next "  title="Older">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                                var current = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                                var older = document.getElementById(<%= (count+1).to_s()%>)
+                                                                                                                                                var olderop = document.getElementById(<%= (count + 2).to_s()%>)
+                                                                                                                                                if(current.className = 'overview.open'){
+                                                                                                                                                        current.className = 'overview';
+                                                                                                                                                        older.className = 'overview.open'
+                                                                                                                                                }
+                                                                                                                                }"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4jWP4//8/A7Ux1Q0cRoaysnMYAPEDEM2ABZBrKMjA/0D8AZvBlLj0Ay6DyTIUBPAZTLah+AymyFBcBlNsKNTgBKihIPxg8LmU6mFK9dinSTqlZY6ibt4nF49wQwEZ7RmGkO+jqQAAAABJRU5ErkJggg==">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                        <div onclick="new function() {
+                                                                                                                                var msg = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(msg.className = 'overview.open'){
+                                                                                                                                        msg.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        msg.className = 'overview.open';
+                                                                                                                                }}"class="overview-controls-right">
+                                                                                                                                <a onclick="new function() {
+                                                                                                                                var msg = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(msg.className = 'overview.open'){
+                                                                                                                                        msg.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        msg.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }"id = "close" class="kd-button small close" title="Close">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                var msg = document.getElementById(<%=count.to_s()%>);
+                                                                                                                                if(msg.className = 'overview.open'){
+                                                                                                                                        msg.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        msg.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }" width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAEZ0FNQQAAsY58+1GTAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAK9JREFUeNpjYBgFQxpoAPFqIObBIicBxOuhNFbAjEN8NxA7AbEd1PBfSAbuB2IbIFYB4pWkGHoQiEOAWAvJYCGogSBf3ADiUCD+gk0zI4Eg2A913REgFkEy0BGIX5DqfRB4A8RbkVwsQoyBIMBEIMI+QDGyRV8IxTI+l0qgheEftDD+Raqh6AY6QmM6hBiDcRkKMlAPLQzRw1gNajDRAJQOT+NI4CDXn4fSo2AUoAEAj24p6G8syswAAAAASUVORK5CYII=">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                </div>
+                                                                                                                <div class="overview-content" tabindex="0">
+                                                                                                                        <div class="article hentry " itemtype="http://schema.org/BlogPosting" itemscope="">
+                                                                                                                                <div class="article-header">
+                                                                                                                                        <a class="ribbon date " itemprop="url">
+                                                                                                                                                <div class="top ribbon-piece"><%=Time.new.strftime("%b")%></div>
+                                                                                                                                                <div class="bottom ribbon-piece"><%=Time.new.day%></div>
+                                                                                                                                                <div class="tail">
+                                                                                                                                                        <div class="left ribbon-piece"></div>
+                                                                                                                                                        <div class="right ribbon-piece"></div>
+                                                                                                                                                </div>
+                                                                                                                                        </a>
+                                                                                                                                        <h1 class="title entry-title" itemprop="name">
+                                                                                                                                                <a itemprop="url" rel="bookmark"><%=link_to fin_url, :target=> "_blank" do %><%="News Feed (Message Update)"%><%end%></a>
+                                                                                                                                        </h1>
+                                                                                                                                </div>
+                                                                                                                                <div class="article-content entry-content" itemprop="articleBody">
+                                                                                                                                        <%= allnames%>
+                                                                                                                                        <br/>
+                                                                                                                                        <%= image_tag friend_pic_url%>
+                                                                                                                                        <%= image_tag img_url%>
+                                                                                                                                        <br/>
+																	<% if names != nil %>
+																		<%= names + " " + friendpost["caption"]%>
+																	<% else %>
+																		<%= friendpost["caption"]%>
+																	<% end %>
+																 </div>
+                                                                                                                        </div>
+                                                                                                                </div>
+                                                                                                        </div>
+                                                                                                </div>
+                                                                                        </div>
+                                                                                </div>
+                                                </div>
+
+					<%elsif img_url != nil  && friend_pic_url != 0 && friend_pic_url != nil%>
+						<div itemtype="http://www.life-tyme.com/" itemscope="" class="item revstart" data-id="" style="left: 150px; top: 0px; width: 151px; height: 150px;">
+                                                        <div class="card ">
+                                                                <div  class="front">
+									<%if friend_pic_url != nil && friend_pic_url != 0 %>
+                                                                        <%= image_tag friend_pic_url, :size =>"150x150" %>
+									<%end%>
+                                                                        <div class="overlay">
+                                                                        </div>
+                                                                </div>
+                                                                <%= link_to fin_url, :target =>"_blank" do%><div class="back">
+                                                                        <div class="overlay">
+                                                                                <div itemprop="name" class="title entry-title">
+                                                                                        <%if names != nil%>
+                                                                                                <%finalwi = names +  " was tagged in a post." %>
+                                                                                        	<%=finalwi[0,80] + '...' %> 
+											<%elsif names ==nil%>
+                                                                                        <%end%>
+											<%=image_tag img_url, :size =>"75x75",:scale => :fit, :width => "", :height => ""%>
+                                                                                </div>
+                                                                        </div>
+                                                                </div><% end %>
+                                                        </div>
+                                                </div>
+					<% elsif img_url == nil %>
+					<% elsif friend_pic_url == nil%>
+					<% elsif friend_pic_url == 0%>
+					<% elsif friendpost["caption"] == nil%>
+					<% elsif friendpost["message"] == nil %>
+					<% elsif friendpost["story"] == nil %>
+					<% elsif friendpost  == nil%>
+					<%else%>
+					<% end %>
+			
+				<%end%>
+				<%end%>
+			<% end %>
+
+		<%elsif @newsfeed == nil%>
+		<% end %>
+<br />
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+
+<br />
+<br />
+
+<br />
+<br />
+<br />
+<br />
+<br />
+<%end%>
+<%end%>
+
+
+
+<% @services.each do |service| %> 
+	<% if ['yahoo'].index(service.provider)  %>
+		this is what it should print
+		<%= session['yahoo']  %>
+	<% end %>
+	
+
+
+<% end %>
+
+<% @services.each do |service| %> 
+	<% begin %> 
+	
+
+	<% if ['twitter'].index(service.provider)  %>
+		<%= @dxx %>
+
+		<head><%= image_tag "Twitterlogo_616.png", :size  =>"135x75" %></head>
+  	        <br />
+		<% counts = 1000%>
+		<% while @twitterFeed == nil %>
+			<% @twitterFeed = Twitter.home_timeline(:count => 19) %>
+		<% end %> 
+		<% @twitterFeed.each do |tweet|%>
+			<% counts = counts + 1%>
+			<% twitn = tweet.user.screen_name %>
+			<% twit_pic_url =  "http://res.cloudinary.com/demo/image/twitter_name/w_48,h_48,c_fill,r_3,g_faces/" + twitn + ".jpg"  %>
+			<% ftwit_pic_url =  "http://res.cloudinary.com/demo/image/twitter_name/w_150,h_150,c_fill,r_3,g_faces/" + twitn + ".jpg"  %>
+
+			<%word = tweet.text%>
+			<%loc = word.index('http://')%>
+			<%len = word.length%>
+			<div itemtype="http://www.life-tyme.com/" itemscope="" class="item revstart" data-id="" style="left: 175px; top: 0px; width: 175px; height: 175px;">
+					<%if loc != nil%>
+					<%link = word[loc,len]%>
+					<% if link.index(" ") != nil %>
+						<% spaceloc = link.index(" ") %>
+						<% link = link[0,spaceloc] %>
+					<% end %>
+                                        <div  onclick="new function() {
+                                                                        var twit = document.getElementById(<%=counts.to_s()%>);
+                                                                        if (twit.className = 'overview'){
+                                                                                twit.className = 'overview.open';
+                                                                        }else{
+                                                                                twit.className ='overview';
+                                                                        }
+                                        }"class="single">
+                                                <div class="overlay">
+                                                	<div itemprop="name" class="title entry-title">
+                                                        	<% sent = word[0,loc] %>
+								<% if sent.length > 90 %>
+									<%= sent[0,90] + '...' %>
+								<% else %>
+									<%= sent %>
+								<% end %>
+								<br />
+								<%= image_tag twit_pic_url, :size =>"48x48" %>
+								<br />
+								<br />
+                                                        </div>
+                                                </div>
+                                        </div>
+					<%else%>
+					<div onclick="new function() {
+                                                                        var twit = document.getElementById(<%=counts.to_s()%>);
+                                                                        if (twit.className = 'overview'){
+                                                                                twit.className = 'overview.open';
+                                                                        }else{
+                                                                                twit.className ='overview';
+                                                                        }
+                                        }"class="single">
+                                                <div class="overlay">
+                                                        <div itemprop="name" class="title entry-title">
+                                                                <% wordy = tweet.text %>
+								<% if wordy.length > 90 %>
+									<%= wordy[0,90] + '...' %>
+								<%else%>
+									<%= wordy %>
+								<% end %>
+								<br />
+								<%= image_tag twit_pic_url, :size =>"48x48" %>
+                                                                <br />
+                                                                <br />
+                                                        </div>
+                                                </div>
+                                        </div>
+					<%end%>
+                                </div>
+					 <div id=<%=counts.to_s()%> class="overview">
+                                                                                <div class="overview-backdrop"></div>
+                                                                                        <div class="overview-panel current start" style="top: 50px; right: 20px; bottom: 0px; left: 20px;">
+                                                                                                <div class="overview-wrap">
+                                                                                                        <div class="overview-inner">
+                                                                                                                <div class="overview-header">
+															<div class="overview-controls-left">
+                                                                                                                                <a onclick ="new function() {
+                                                                                                                                        var current = document.getElementById(<%=counts.to_s()%>);
+                                                                                                                                        var newer = document.getElementById(<%= (counts-1).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+                                                                                                                                                newer.className = 'overview.open'
+                                                                                                                                        }
+                                                                                                                                }" class="kd-button small left previous "  title="Newer">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                                var current = document.getElementById(<%=counts.to_s()%>);
+                                                                                                                                                var newer = document.getElementById(<%= (counts - 1).to_s()%>)
+                                                                                                                                                if(current.className = 'overview.open'){
+                                                                                                                                                        current.className = 'overview';
+                                                                                                                                                        if(newer.className != 'overview'){
+                                                                                                                                                                newerop.className = 'overview.open';
+                                                                                                                                                        else {
+                                                                                                                                                                newer.className='overview.open'
+                                                                                                                                                        }
+                                                                                                                                                }
+                                                                                                                                        }"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4y2P4//8/A7Uxw6ihuCWxAFZ2DgMgfgCiqWIo1MAPQPwfZDDFhqIZ+IFil2IzECROtqG4DCTbUHwGUmLoA6iBIJyAHnGDx6U0CVOaxT7N0inNchTV8v5oIU0WBgCihhmGBdyx8gAAAABJRU5ErkJggg==">
+                                                                                                                                </a>
+                                                                                                                                <a onclick="new function(){
+                                                                                                                                        var current = document.getElementById(<%=counts.to_s()%>);
+                                                                                                                                        var older = document.getElementById(<%= (counts+1).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+                                                                                                                                                older.className = 'overview.open'
+                                                                                                                                        }
+                                                                                                                                }"class="kd-button small right next "  title="Older">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                                var current = document.getElementById(<%=counts.to_s()%>);
+                                                                                                                                                var older = document.getElementById(<%= (counts+1).to_s()%>)
+                                                                                                                                                if(current.className = 'overview.open'){
+                                                                                                                                                        current.className = 'overview';
+                                                                                                                                                        older.className = 'overview.open'
+                                                                                                                                                }
+                                                                                                                                }"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4jWP4//8/A7Ux1Q0cRoaysnMYAPEDEM2ABZBrKMjA/0D8AZvBlLj0Ay6DyTIUBPAZTLah+AymyFBcBlNsKNTgBKihIPxg8LmU6mFK9dinSTqlZY6ibt4nF49wQwEZ7RmGkO+jqQAAAABJRU5ErkJggg==">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                        <div onclick="new function() {
+                                                                                                                                var twit = document.getElementById(<%=counts.to_s()%>);
+                                                                                                                                if(twit.className = 'overview.open'){
+                                                                                                                                        twit.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        twit.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }"class="overview-controls-right">
+                                                                                                                                <a onclick="new function() {
+                                                                                                                                var twit = document.getElementById(<%=counts.to_s()%>);
+                                                                                                                                if(twit.className = 'overview.open'){
+                                                                                                                                        twit.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        twit.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }"id = "close" class="kd-button small close" title="Close">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                var twit = document.getElementById(<%=counts.to_s()%>);
+                                                                                                                                if(twit.className = 'overview.open'){
+                                                                                                                                        twit.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        twit.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }" width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAEZ0FNQQAAsY58+1GTAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAK9JREFUeNpjYBgFQxpoAPFqIObBIicBxOuhNFbAjEN8NxA7AbEd1PBfSAbuB2IbIFYB4pWkGHoQiEOAWAvJYCGogSBf3ADiUCD+gk0zI4Eg2A913REgFkEy0BGIX5DqfRB4A8RbkVwsQoyBIMBEIMI+QDGyRV8IxTI+l0qgheEftDD+Raqh6AY6QmM6hBiDcRkKMlAPLQzRw1gNajDRAJQOT+NI4CDXn4fSo2AUoAEAj24p6G8syswAAAAASUVORK5CYII=">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                </div>
+                        			<div class="overview-content" tabindex="0">
+                                                       <div class="article hentry " itemtype="http://schema.org/BlogPosting" itemscope="">
+                                                                <div class="article-header">
+                                                                       <a class="ribbon date " itemprop="url">
+                                                                                <div class="top ribbon-piece"><%=Time.new.strftime("%b")%></div>
+                                                                                <div class="bottom ribbon-piece"><%=Time.new.day%></div>
+                                                                                <div class="tail">
+                                                                                        <div class="left ribbon-piece"></div>
+                                                                                	<div class="right ribbon-piece"></div>
+                                                                                </div>
+                                                                        </a>
+                                                                        <h1 class="title entry-title" itemprop="name">
+                                                                                <a itemprop="url" rel="bookmark"><%=link_to link, :target=> "_blank" do %><%="Twitter Post"%><%end%></a>
+                                                                        </h1>
+                                                                        </div>
+                                                                                <div class="article-content entry-content" itemprop="articleBody">
+                                                                                	<%= twitn %>
+											<br/>
+											<%= image_tag ftwit_pic_url %>
+											<br/>
+											<%= word %>
+                                                                        	</div>
+                                                                	</div>
+                                                        	</div>
+                                                	</div>
+                                        	</div>
+                                	</div>
+                        	</div>
+			</div>
+		<%end%>
+		
+	<% end %>
+ 	<br />
+	<%rescue%>
+		<% @posts = OldTwit.all %>
+	
+		<% @cnt = 0 %>
+            	<% @posts.each do |post| %>
+          		<tr>
+ 	    	    		<td><% post.name %></td>
+	            		<td><% @tweeting = post.tdata %></td>
+	            		<td><% ActiveSupport::JSON.decode(@tweeting) %></td>
+        		</tr>
+			<% if post.name != nil%>
+				<%if post.name == current_user.name   %>
+					<% @i = 0 %>
+					<% ActiveSupport::JSON.decode(@tweeting).each do |tweets|%>
+					<% if @i < 20 %>
+							<% @i = @i + 1 %>
+		                	        	<% sep = tweets.to_json %> 
+							<% indsn = sep.index('"screen_name"') + 15%>
+							<% len = sep.length%>
+							<% firstsn = sep[indsn, len]%>
+							<% indquo = firstsn.index('"')%>
+							<%finsn = firstsn[0,indquo]%>
+						 	<% indtext = sep.index('"text"') + 8%>
+							<% firstxt = sep[indtext,len]%>
+							<% indquo2 = firstxt.index('",')%>
+							<% if firstxt != nil%>
+								<% fintxt = firstxt[0,indquo2]%>
+							<% end %>
+								
+                        				<% twitter_pic_url =  "http://res.cloudinary.com/demo/image/twitter_name/w_48,h_48,c_fill,r_3,g_faces/" + finsn + ".jpg"  %>
+
+                        				<%wor = fintxt%>
+                        				<%loc = wor.index('http://')%>
+                        				<%len = wor.length%>
+                        				<div itemtype="http://www.life-tyme.com/" itemscope="" class="item revstart" data-id="" style="left: 175px; top: 0px; width: 175px; height: 175px;">
+                                        		<%if loc != nil%>
+                                        			<%link = wor[loc,len]%>
+                                        			<%= link_to link, :target =>"_blank" do%><div class="single">
+                                                			<div class="overlay">
+                                                        			<div itemprop="name" class="title entry-title">
+                                                                			<% sen = wor[0,loc] %>
+                                                                			<% if sen.length > 90 %>
+                                                                        			<%= sen[0,90].gsub("\\", "") + '...' %>
+                                                                			<% else %>
+                                                                        			<%= sen.gsub("\\", "") %>
+                                                                			<% end %>
+                                                                			<br />
+                                                                			<%= image_tag twitter_pic_url, :size =>"48x48" %>
+                                                                			<br />
+                                                                			<br />
+                                                        			</div>
+                                                			</div>
+                                        			</div><%end%>
+                                        		<%else%>
+                                        			<div class="single">
+                                                			<div class="overlay">
+                                                        			<div itemprop="name" class="title entry-title">
+                                                                			<% wory = fintxt %>
+                                                                			<% if wory.length > 90 %>
+                                                                        			<%= wory[0,90].gsub("\\", "") + '...' %>
+                                                                			<%else%>
+                                                                        			<%= wory.gsub("\\","") %>
+                                                                			<% end %>
+                                                                			<br />
+                                                                			<%= image_tag twitter_pic_url, :size =>"48x48" %>
+                                                                			<br />
+                                                                			<br />
+                                                        			</div>
+                                                			</div>
+                                        			</div>
+                                        		<%end%>
+                                			</div>
+                        				</div>
+					<% end %>		
+					<% end %>		
+				<%end%>
+    		    	<% end %>
+		<%end%>
+	<% end %>
+<% end %>
+
+<% @services.each do |service| %>
+        <% begin %>
+        	<% if ['instagram'].index(service.provider)  %>
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<br />
+			<head><%= image_tag "instagramlogo.png", :size  =>"157x70" %></head>
+			<br />
+			<% counter = 10000%>
+			<% @rsup.each do |post|  %>
+			        <% full = post.to_json%>
+			       		 <% ilink = JSON.parse(full)["link"] %>
+			        	<% if JSON.parse(full)["caption"] != nil %>
+			        	 <% itxt = JSON.parse(full)["caption"]["text"] %>
+			                <% end %>
+			        	 <% iimg = JSON.parse(JSON.parse(full)["images"]["standard_resolution"].to_json)["url"] %>
+			                <% if JSON.parse(full)["caption"] != nil %>
+			        	 <% iname = JSON.parse(JSON.parse(full)["caption"]["from"].to_json)["username"] %>
+			                <% end %>
+			                <% if JSON.parse(full)["caption"] != nil %>
+			        	 <% ipfpic = JSON.parse(JSON.parse(full)["caption"]["from"].to_json)["profile_picture"] %>
+			                <% end %>
+
+				<% if JSON.parse(full)["caption"] != nil %>
+	        		<% counter = counter + 1%>
+				<div itemtype="http://www.life-tyme.com" itemscope="" class="item revstart" data-id="" style="left: 185px; top: 185px; width: 185px; height: 185px;">
+                        		<div class="card ">
+		                                <div  class="front">
+		                                        <%= image_tag ipfpic, :size => "175x175" %>
+							<br/>
+							<%=iname%>
+		                                        <div class="overlay">
+		                                        </div>
+		                                </div>
+		                                <div onclick="new function() {
+                                                                        var inst = document.getElementById(<%=counter.to_s()%>);
+                                                                        if (inst.className = 'overview'){
+                                                                                inst.className = 'overview.open';
+                                                                        }else{
+                                                                                inst.className ='overview';
+                                                                        }
+                                        	}"class="back" >
+		                                        <div class="overlay">
+        		                                        <div itemprop="name" class="title entry-title">
+                		                                        <%= iname + " posts " + itxt[0,80] %>
+									<br />
+									<%= image_tag iimg, :size => "48x48"%>
+                        		                        </div>
+                                		        </div>
+                               			 </div>
+		                        </div>
+        		        </div>
+				<div id=<%=counter.to_s()%> class="overview">
+                                                                                <div class="overview-backdrop"></div>
+                                                                                        <div class="overview-panel current start" style="top: 50px; right: 20px; bottom: 0px; left: 20px;">
+                                                                                                <div class="overview-wrap">
+                                                                                                        <div class="overview-inner">
+                                                                                                                <div class="overview-header">
+                                                                                                                        <div class="overview-controls-left">
+                                                                                                                                <a onclick ="new function() {
+                                                                                                                                        var current = document.getElementById(<%=counter.to_s()%>);
+                                                                                                                                        var newer = document.getElementById(<%= (counter-1).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+                                                                                                                                                newer.className = 'overview.open'
+                                                                                                                                        }
+                                                                                                                                }" class="kd-button small left previous "  title="Newer">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                                var current = document.getElementById(<%=counter.to_s()%>);
+                                                                                                                                                var newer = document.getElementById(<%= (counter - 1).to_s()%>)
+                                                                                                                                                if(current.className = 'overview.open'){
+                                                                                                                                                        current.className = 'overview';
+                                                                                                                                                        if(newer.className != 'overview'){
+                                                                                                                                                                newerop.className = 'overview.open';
+                                                                                                                                                        else {
+                                                                                                                                                                newer.className='overview.open'
+                                                                                                                                                        }
+                                                                                                                                                }
+                                                                                                                                        }"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4y2P4//8/A7Uxw6ihuCWxAFZ2DgMgfgCiqWIo1MAPQPwfZDDFhqIZ+IFil2IzECROtqG4DCTbUHwGUmLoA6iBIJyAHnGDx6U0CVOaxT7N0inNchTV8v5oIU0WBgCihhmGBdyx8gAAAABJRU5ErkJggg==">
+                                                                                                                                </a>
+                                                                                                                                <a onclick="new function(){
+                                                                                                                                        var current = document.getElementById(<%=counter.to_s()%>);
+                                                                                                                                        var older = document.getElementById(<%= (counter+1).to_s()%>)
+                                                                                                                                        if(current.className = 'overview.open'){
+                                                                                                                                                current.className = 'overview';
+                                                                                                                                                older.className = 'overview.open'
+                                                                                                                                        }
+                                                                                                                                }"class="kd-button small right next "  title="Older">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                                var current = document.getElementById(<%=counter.to_s()%>);
+                                                                                                                                                var older = document.getElementById(<%= (counter+1).to_s()%>)
+                                                                                                                                                if(current.className = 'overview.open'){
+                                                                                                                                                        current.className = 'overview';
+                                                                                                                                                        older.className = 'overview.open'
+                                                                                                                                                }
+                                                                                                                                }"width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAYUlEQVQ4jWP4//8/A7Ux1Q0cRoaysnMYAPEDEM2ABZBrKMjA/0D8AZvBlLj0Ay6DyTIUBPAZTLah+AymyFBcBlNsKNTgBKihIPxg8LmU6mFK9dinSTqlZY6ibt4nF49wQwEZ7RmGkO+jqQAAAABJRU5ErkJggg==">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                        <div onclick="new function() {
+                                                                                                                                var inst = document.getElementById(<%=counter.to_s()%>);
+                                                                                                                                if(inst.className = 'overview.open'){
+                                                                                                                                        inst.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        inst.className = 'overview.open';
+                                                                                                                                }
+															}"class="overview-controls-right">
+                                                                                                                                <a onclick="new function() {
+                                                                                                                                var inst = document.getElementById(<%=counter.to_s()%>);
+                                                                                                                                if(inst.className = 'overview.open'){
+                                                                                                                                        inst.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        inst.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }"id = "close" class="kd-button small close" title="Close">
+                                                                                                                                        <img onclick="new function() {
+                                                                                                                                var inst = document.getElementById(<%=counter.to_s()%>);
+                                                                                                                                if(inst.className = 'overview.open'){
+                                                                                                                                        inst.className = 'overview';
+                                                                                                                                }
+                                                                                                                                else{
+                                                                                                                                        inst.className = 'overview.open';
+                                                                                                                                }
+                                                                                                                        }" width="21" height="21" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABUAAAAVCAYAAACpF6WWAAAAIGNIUk0AAHomAACAhAAA+gAAAIDoAAB1MAAA6mAAADqYAAAXcJy6UTwAAAAEZ0FNQQAAsY58+1GTAAAAAXNSR0IArs4c6QAAAAZiS0dEAP8A/wD/oL2nkwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAK9JREFUeNpjYBgFQxpoAPFqIObBIicBxOuhNFbAjEN8NxA7AbEd1PBfSAbuB2IbIFYB4pWkGHoQiEOAWAvJYCGogSBf3ADiUCD+gk0zI4Eg2A913REgFkEy0BGIX5DqfRB4A8RbkVwsQoyBIMBEIMI+QDGyRV8IxTI+l0qgheEftDD+Raqh6AY6QmM6hBiDcRkKMlAPLQzRw1gNajDRAJQOT+NI4CDXn4fSo2AUoAEAj24p6G8syswAAAAASUVORK5CYII=">
+                                                                                                                                </a>
+                                                                                                                        </div>
+                                                                                                                </div>
+                                                <div class="overview-content" tabindex="0">
+                                                       <div class="article hentry " itemtype="http://schema.org/BlogPosting" itemscope="">
+                                                                <div class="article-header">
+                                                                       <a class="ribbon date " itemprop="url">
+                                                                                <div class="top ribbon-piece"><%=Time.new.strftime("%b")%></div>
+                                                                                <div class="bottom ribbon-piece"><%=Time.new.day%></div>
+                                                                                <div class="tail">
+                                                                                        <div class="left ribbon-piece"></div>
+                                                                                        <div class="right ribbon-piece"></div>
+                                                                                </div>
+                                                                        </a>
+                                                                        <h1 class="title entry-title" itemprop="name">
+                                                                                <a itemprop="url" rel="bookmark"><%=link_to ilink, :target=> "_blank" do %><%="Instagram Update"%><%end%></a>
+                                                                        </h1>
+                                                                        </div>
+                                                                                <div class="article-content entry-content" itemprop="articleBody">
+                                                                                        <%= iname %>
+                                                                                        <br/>
+                                                                                        <%= image_tag ipfpic %>
+											<%= image_tag iimg%>
+                                                                                        <br/>
+                                                                                        <%= itxt %>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+				<% end %>
+			<% end %>
+		<% end %>	
+	<% rescue %>
+	<% end %>
+<% end %>	
+</body>

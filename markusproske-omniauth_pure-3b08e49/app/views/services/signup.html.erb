@@ -1,0 +1,20 @@
+<section id="services_new" class="services">
+	<h8><%='New account'%></h8>
+	<br />
+	<br />
+	<div>
+		<h3>This authentication is new to Lifetyme</h3>
+	<br />	
+		<p class="small">
+			Provider: <%= @authhash[:provider] %><br />
+			Name: <%= @authhash[:name] %><br />
+			<% if @authhash[:provider] != 'twitter'%>
+			Email: <%= @authhash[:email] %>	<br />
+			<% end %>
+		</p>
+		<br />
+		<%= form_tag :controller => "services", :action => "newaccount" do %>
+			<%= submit_tag "Confirm and create new account" %> <%= submit_tag "Cancel" %>
+		<% end %>
+	</div>
+</section>

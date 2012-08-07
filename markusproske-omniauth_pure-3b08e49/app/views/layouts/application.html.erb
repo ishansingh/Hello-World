@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>LifeTyme</title>
+  <%= stylesheet_link_tag :all %>
+  <%= javascript_include_tag :defaults %>
+  <%= csrf_meta_tag %>
+</head>
+<body>
+<section id="head">
+<div class= "search">
+<div id="cse-search-form" style="width: auto">Loading</div>
+<script src="http://www.google.com/jsapi" type="text/javascript"></script>
+<script type="text/javascript"> 
+  google.load('search', '1', {language : 'en', style : google.loader.themes.V2_DEFAULT});
+  google.setOnLoadCallback(function() {
+    var customSearchOptions = {};  var customSearchControl = new google.search.CustomSearchControl(
+      '005938077976314381619:m12cp7-bdea', customSearchOptions);
+    customSearchControl.setResultSetSize(google.search.Search.LARGE_RESULTSET);
+    var options = new google.search.DrawOptions();
+    options.enableSearchboxOnly("http://www.google.com/cse?cx=005938077976314381619:m12cp7-bdea", null, true);
+    customSearchControl.draw('cse-search-form', options);
+  }, true);
+</script>
+</div>
+
+	<section id="user">
+		<% if user_signed_in? %>
+			<nav id="nav_user">
+				<ul>
+					<span><%= current_user.name %></span>
+					<li><%= link_to "Services", services_path %>
+					<li><%= link_to "Sign out", signout_services_path %></li>
+					<li><spacers><%= link_to services_test_path do%>
+        <% image_tag 'lifetymelogo.png'%><%end%></spacers></li>
+				</ul>
+			</nav>
+		<% else %>
+			<nav id="nav_user">
+				<ul>
+					<span>Sign in with:</span>
+					<br \>
+					<li><spacer><%= link_to services_test_path do%>
+        <% image_tag 'lifetymelogo.png'%><%end%></spacer></li>
+					<li><%= link_to "/auth/twitter" do %>
+                                        <%= image_tag 'twitter_64.png'%><% end %></li>
+
+					<li><%= link_to "/auth/facebook" do %>
+					<%= image_tag 'facebook_64.png'%><% end %>
+					<br \>
+					<li><%= link_to "Future", signin_services_path %>
+				</ul>
+			</nav>
+		<% end %>
+	</section>
+</section>
+
+<section id="body">
+	<section id="flash">
+		<% flash.each do |key, value| %>
+			<div class="flash <%= key %> round"><%= value %></div>
+		<% end %>
+	</section>
+
+	<%= yield %>
+</section>
+
+</body>
+</html>
